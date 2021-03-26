@@ -8,19 +8,42 @@ new Vue({
         todos: []
       }
     },
+    created() {
+      fetch('api/todo', {
+        method: 'get'
+      })
+      .then(res => res.json())
+      .then(data => {
+        if(data.length) this.todos = data
+      })
+      .catch(e => console.error(e))
+    },
     methods: {
       addTodo() {
         const title = this.todoTitle.trim()
         if (!title) {
           return
         }
-        this.todos.push({
-          title: title,
-          id: Math.random(),
-          done: false,
-          date: new Date()
+
+        fetch('/api/todo', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json; charset=utf-8'
+          },
+          body: JSON.stringify({title})
         })
-        this.todoTitle = ''
+        .then(res => res.json())
+        .then(res => {
+          this.todos.push({
+            title: res.title,
+            id: res.id,
+            done: res.done,
+            date: res.date
+          })
+
+          this.todoTitle = ''
+        })
+        .catch(e => console.error(e))
       },
       removeTodo(id) {
         this.todos = this.todos.filter(t => t.id !== id)
