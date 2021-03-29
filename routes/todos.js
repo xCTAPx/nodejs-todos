@@ -33,17 +33,23 @@ router.post('/', async (req, res) => {
     }
 })
 
-router.put('/:id', (req, res) => {
+router.put('/:id', async (req, res) => {
     try {
-        res.json({a: 'put'})
+        const task = await Todo.findByPk(+req.params.id)
+        task.done = !task.done
+        await task.save()
+
+        res.json(task)
     } catch(e) {
         res.status(500).json({message: 'Server error'})
     }
 })
 
-router.delete('/:id', (req, res) => {
+router.delete('/:id', async (req, res) => {
     try {
-        res.json({a: 'delete'})
+        const task = await Todo.findByPk(+req.params.id)
+        await task.destroy()
+        res.status(204).json({})
     } catch(e) {
         res.status(500).json({message: 'Server error'})
     }

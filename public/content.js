@@ -46,7 +46,16 @@ new Vue({
         .catch(e => console.error(e))
       },
       removeTodo(id) {
+        fetch('/api/todo/' + id, { method: 'delete' })
+        .then(res => res.json())
+        .catch(e => console.log(e))
         this.todos = this.todos.filter(t => t.id !== id)
+      },
+      completeTodo(id) {
+        fetch('api/todo/' + id, { method: 'put' })
+        .then(res => res.json())
+        .then(data => console.log(data))
+        .catch(e => console.log(e))
       }
     },
     filters: {
